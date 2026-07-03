@@ -17,7 +17,6 @@
 }
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--grey-bg);color:var(--text);min-height:100vh;padding-bottom:30px}
 
-/* TOP BAR */
 .topbar{background:var(--purple-dark);padding:14px 16px;position:sticky;top:0;z-index:30}
 .topbar-org{font-size:11px;color:rgba(255,255,255,0.6);letter-spacing:.06em;text-transform:uppercase;margin-bottom:2px}
 .topbar-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
@@ -26,16 +25,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .icon-btn{background:rgba(255,255,255,0.15);border:none;border-radius:8px;color:#fff;padding:8px 12px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit}
 .icon-btn:active{opacity:0.7}
 
-.wrap{max-width:760px;margin:0 auto;padding:0 16px}
+.wrap{max-width:780px;margin:0 auto;padding:0 16px}
 
-/* CYCLE BAR */
 .cycle-bar{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);margin-top:14px;padding:14px}
-.cycle-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.cycle-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px}
 .field-group{display:flex;flex-direction:column;gap:4px}
 .field-label{font-size:11px;font-weight:600;color:var(--grey-text);text-transform:uppercase;letter-spacing:.04em}
 .field-group input,.field-group select{border:1px solid var(--grey-border);border-radius:8px;padding:9px 10px;font-size:14px;font-weight:500;color:var(--text);background:var(--grey-bg);width:100%;outline:none;font-family:inherit}
 .field-group input:focus,.field-group select:focus{border-color:var(--purple)}
-.cycle-actions{display:flex;gap:8px;flex-wrap:wrap}
+.week-label{font-size:12px;color:var(--grey-text);margin-top:-2px}
+.week-label b{color:var(--purple-dark)}
+.cycle-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .btn{padding:9px 14px;border-radius:8px;border:1px solid var(--grey-border);background:var(--white);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--text)}
 .btn:active{opacity:.7}
 .btn.primary{background:var(--purple);color:#fff;border-color:var(--purple)}
@@ -47,13 +47,25 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .saved-chip:hover{border-color:var(--purple)}
 .saved-chip .del{color:var(--red);font-weight:700;cursor:pointer;padding:0 2px}
 
-/* SECTION CARD */
 .card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);margin-top:14px;padding:14px}
-.card h2{font-size:14px;font-weight:700;color:var(--purple-dark);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.card h2{font-size:14px;font-weight:700;color:var(--purple-dark);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px}
 .card h2 .hint{font-size:11px;font-weight:500;color:var(--grey-text);text-transform:none}
 
+/* QUICK ADD ROW */
+.quick-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.quick-actions .btn{flex:1;min-width:150px}
+
+/* BULK IMPORT */
+.bulk-panel{background:var(--purple-light);border-radius:var(--radius);padding:12px;margin-bottom:12px;display:none}
+.bulk-panel.active{display:block}
+.bulk-panel p{font-size:11.5px;color:var(--purple-dark);margin-bottom:8px;line-height:1.5}
+.bulk-panel textarea{width:100%;min-height:110px;border:1px solid var(--grey-border);border-radius:8px;padding:9px 10px;font-size:12.5px;font-family:'SF Mono',Consolas,monospace;resize:vertical;outline:none;background:var(--white)}
+.bulk-panel textarea:focus{border-color:var(--purple)}
+.bulk-panel .bulk-btns{display:flex;gap:8px;margin-top:8px}
+.bulk-example{font-size:11px;color:var(--grey-text);margin-top:6px;font-family:'SF Mono',Consolas,monospace;background:var(--white);border-radius:6px;padding:6px 8px}
+
 /* ENTRY TABLE */
-.entry-row{display:grid;grid-template-columns:1.3fr 1fr 0.7fr 0.8fr 1fr auto;gap:6px;align-items:end;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--grey-border)}
+.entry-row{display:grid;grid-template-columns:1.2fr 0.9fr 0.55fr 0.45fr 0.45fr 1fr auto;gap:6px;align-items:end;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--grey-border)}
 .entry-row:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
 .entry-row label{font-size:9.5px;font-weight:600;color:var(--grey-text);text-transform:uppercase;letter-spacing:.03em;display:block;margin-bottom:3px}
 .entry-row select,.entry-row input{width:100%;border:1px solid var(--grey-border);border-radius:7px;padding:7px 6px;font-size:12.5px;background:var(--grey-bg);font-family:inherit;outline:none}
@@ -64,10 +76,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .add-row-btn:active{opacity:.7}
 .empty-note{color:var(--grey-text);font-size:12.5px;text-align:center;padding:14px 0}
 
-/* PRODUCTION INPUTS */
 .prod-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 
-/* SUMMARY */
 .summary-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px}
 .summary-stat{background:var(--grey-bg);border-radius:var(--radius);padding:12px;text-align:center}
 .summary-stat .num{font-size:22px;font-weight:700;color:var(--purple-dark)}
@@ -83,46 +93,40 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .top-cause-flag{margin-top:10px;background:var(--amber-light);border:1px solid #F5D0A4;border-radius:8px;padding:9px 12px;font-size:12px;color:#8a4b0f}
 .top-cause-flag b{color:var(--amber)}
 
-/* EXPORT ROW */
 .export-row{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
 .export-row .btn{flex:1;min-width:140px}
 
-/* TOAST */
-.toast{position:fixed;top:14px;left:16px;right:16px;max-width:728px;margin:0 auto;padding:13px 16px;border-radius:var(--radius);font-size:13.5px;font-weight:500;z-index:200;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,.15);color:#fff}
+.toast{position:fixed;top:14px;left:16px;right:16px;max-width:748px;margin:0 auto;padding:13px 16px;border-radius:var(--radius);font-size:13.5px;font-weight:500;z-index:200;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,.15);color:#fff}
 .toast.success{background:var(--green)}
 .toast.warning{background:var(--amber)}
 .toast.error{background:var(--red)}
 
-/* HELP MODAL */
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;align-items:center;justify-content:center;padding:20px}
 .overlay.active{display:flex}
-.help-dialog{background:#fff;border-radius:16px;padding:22px;max-width:480px;max-height:82vh;overflow-y:auto}
+.help-dialog{background:#fff;border-radius:16px;padding:22px;max-width:500px;max-height:82vh;overflow-y:auto}
 .help-dialog h3{color:var(--purple-dark);font-size:16px;margin-bottom:12px}
 .help-dialog h4{color:var(--purple);font-size:13px;margin:14px 0 5px}
 .help-dialog p,.help-dialog li{font-size:13px;line-height:1.55;color:var(--text)}
 .help-dialog ul,.help-dialog ol{padding-left:18px;margin-bottom:6px}
+.help-dialog code{background:var(--grey-bg);padding:1px 5px;border-radius:4px;font-size:12px}
 .help-close{width:100%;margin-top:16px;padding:11px;border-radius:8px;border:none;background:var(--purple);color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
 
-/* PRINT */
 .print-only{display:none}
 @media print{
-  .topbar,.cycle-bar,.add-row-btn,.entry-remove,.export-row,.overlay,.toast{display:none!important}
+  .topbar,.cycle-bar,.add-row-btn,.entry-remove,.export-row,.overlay,.toast,.quick-actions,.bulk-panel{display:none!important}
   body{background:#fff;padding:0}
   .card{box-shadow:none;border:1px solid #ccc;break-inside:avoid}
   .print-only{display:block}
   .wrap{max-width:100%}
 }
 
-@media (max-width:600px){
-  .entry-row{grid-template-columns:1fr 1fr;grid-template-areas:"cat cat" "asset mch" "min date" "loss remove"}
-  .entry-row > div:nth-child(1){grid-area:cat}
-  .entry-row > div:nth-child(2){grid-area:asset}
-  .entry-row > div:nth-child(3){grid-area:mch}
-  .entry-row > div:nth-child(4){grid-area:min}
-  .entry-row > div:nth-child(5){grid-area:date}
+@media (max-width:640px){
+  .entry-row{grid-template-columns:1fr 1fr}
+  .entry-row > div{width:100%}
   .cycle-row{grid-template-columns:1fr}
   .prod-grid{grid-template-columns:1fr}
   .summary-grid{grid-template-columns:1fr 1fr}
+  .quick-actions .btn{min-width:120px}
 }
 </style>
 </head>
@@ -144,15 +148,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <!-- CYCLE BAR -->
   <div class="cycle-bar">
     <div class="cycle-row">
-      <div class="field-group">
+      <div class="field-group" style="grid-column:1 / 2">
         <span class="field-label">Facility / Department</span>
         <input type="text" id="cycle-dept" placeholder="e.g. Rumbu Main Mat Factory &ndash; Mat Extruder">
       </div>
       <div class="field-group">
-        <span class="field-label">Week covered</span>
-        <input type="text" id="cycle-week" placeholder="e.g. 08 to 13 Jun 2026">
+        <span class="field-label">Week start</span>
+        <input type="date" id="cycle-week-start" onchange="onWeekChange()">
+      </div>
+      <div class="field-group">
+        <span class="field-label">Week end</span>
+        <input type="date" id="cycle-week-end" onchange="onWeekChange()">
       </div>
     </div>
+    <div class="week-label" id="week-label-display"></div>
     <div class="cycle-actions">
       <button class="btn primary" onclick="saveCycle()">Save this cycle</button>
       <button class="btn ghost" onclick="newCycle()">New cycle</button>
@@ -164,6 +173,23 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <!-- ENTRY LOG -->
   <div class="card">
     <h2>Downtime entries <span class="hint" id="entry-count-hint">0 entries</span></h2>
+
+    <div class="quick-actions">
+      <button class="btn ghost" onclick="addEntry()">+ Add one entry</button>
+      <button class="btn ghost" onclick="duplicateLast()">&#8942; Duplicate last entry</button>
+      <button class="btn primary" onclick="toggleBulk()">&#9998; Paste several rows at once</button>
+    </div>
+
+    <div class="bulk-panel" id="bulk-panel">
+      <p>Paste multiple rows from a downtime log in one go, one entry per line. Separate the five values with a comma or a tab, in this order: <b>cause, unit or line, machines affected, downtime (minutes), date</b>. Dates can be written as <code>2026-06-11</code> or <code>11/06/2026</code>. Cause can be written as a whole word or just the start of it (e.g. <code>power</code>, <code>staff</code>).</p>
+      <textarea id="bulk-text" placeholder="power, EXT1, 20, 9, 11/06/2026&#10;water, EXT2, 4, 90, 08/06/2026&#10;staff, EXT4, 4, 720, 09/06/2026"></textarea>
+      <div class="bulk-example">Tip: copy straight out of a spreadsheet or the paper log &mdash; columns separated by tabs paste in correctly too.</div>
+      <div class="bulk-btns">
+        <button class="btn primary" onclick="importBulk()">Add these rows</button>
+        <button class="btn ghost" onclick="toggleBulk()">Cancel</button>
+      </div>
+    </div>
+
     <div id="entry-list"></div>
     <button class="add-row-btn" onclick="addEntry()">+ Add downtime entry</button>
   </div>
@@ -212,9 +238,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <h3>How this tool works</h3>
     <p>This tool turns a department's weekly downtime log into an instant loss figure and efficiency review, without manual arithmetic.</p>
     <h4>1. Name the cycle</h4>
-    <p>Enter the facility or department and the week covered, at the top.</p>
-    <h4>2. Add each downtime entry</h4>
-    <p>For every downtime event reported to you, add one entry: cause category, the unit or line affected, how many machines were affected, and how many minutes of downtime. The tool calculates the kilograms lost automatically using the standard rate (0.265 kg per machine per minute).</p>
+    <p>Enter the facility or department, then pick the week start and end dates from the calendar pickers. The week label fills in automatically.</p>
+    <h4>2. Add downtime entries &mdash; the fast way</h4>
+    <p>If you have several rows to enter, use &ldquo;Paste several rows at once&rdquo;. Paste lines in the order cause, unit, machines, minutes, date, and the tool builds all the entries for you in one step. This is the quickest way to enter a full week's log.</p>
+    <h4>Adding entries one at a time</h4>
+    <p>Use &ldquo;+ Add one entry&rdquo; for a single new row, or &ldquo;Duplicate last entry&rdquo; when the next entry is nearly identical to the one before it (same cause and unit, different minutes or date) &mdash; it copies the previous row so you only need to change what's different. Each entry's date uses a calendar picker and defaults to the week's start date to save re-typing it every time.</p>
     <h4>3. Enter the week's production figures</h4>
     <p>Add actual production and target production in kilograms. Efficiency is calculated automatically.</p>
     <h4>4. Read the summary</h4>
@@ -238,18 +266,36 @@ const CATEGORIES = [
   {key:'mechanical', label:'Mechanical / equipment', color:'#C0392B'},
   {key:'other', label:'Other', color:'#888888'}
 ];
-const STORAGE_KEY = 'ed2_downtime_cycles_v1';
+const STORAGE_KEY = 'ed2_downtime_cycles_v2';
 
 let entries = [];
 let entryIdCounter = 0;
+let lastUsed = { category: 'power', asset: '', machines: 1 };
+
+function todayOrWeekStart() {
+  const ws = document.getElementById('cycle-week-start').value;
+  return ws || new Date().toISOString().split('T')[0];
+}
 
 function addEntry(prefill) {
   const id = 'e' + (++entryIdCounter);
   entries.push(Object.assign({
-    id, category:'power', asset:'', machines:1, minutes:'', date:''
+    id,
+    category: lastUsed.category,
+    asset: lastUsed.asset,
+    machines: lastUsed.machines,
+    minutes: '',
+    date: todayOrWeekStart()
   }, prefill || {}));
   renderEntries();
   renderSummary();
+}
+
+function duplicateLast() {
+  if (!entries.length) { addEntry(); return; }
+  const last = entries[entries.length - 1];
+  addEntry({ category: last.category, asset: last.asset, machines: last.machines, minutes: '', date: last.date });
+  showToast('Duplicated the last entry \u2014 adjust minutes or date as needed.', 'success');
 }
 
 function removeEntry(id) {
@@ -262,8 +308,10 @@ function updateEntry(id, field, value) {
   const e = entries.find(x => x.id === id);
   if (!e) return;
   e[field] = value;
+  if (field === 'category') lastUsed.category = value;
+  if (field === 'asset') lastUsed.asset = value;
+  if (field === 'machines') lastUsed.machines = value;
   renderSummary();
-  // refresh only the loss figure without a full re-render to keep focus in the field
   const lossEl = document.getElementById('loss-' + id);
   if (lossEl) lossEl.textContent = computeLoss(e).toFixed(2) + ' kg';
 }
@@ -278,7 +326,7 @@ function renderEntries() {
   const list = document.getElementById('entry-list');
   document.getElementById('entry-count-hint').textContent = entries.length + (entries.length === 1 ? ' entry' : ' entries');
   if (!entries.length) {
-    list.innerHTML = '<div class="empty-note">No downtime entries yet. Add the first one below.</div>';
+    list.innerHTML = '<div class="empty-note">No downtime entries yet. Paste several rows at once, or add one below.</div>';
     return;
   }
   let html = '';
@@ -304,15 +352,66 @@ function renderEntries() {
       </div>
       <div>
         <label>Date</label>
-        <input type="text" value="${e.date}" placeholder="dd/mm/yyyy" oninput="updateEntry('${e.id}','date',this.value)">
+        <input type="date" value="${e.date}" oninput="updateEntry('${e.id}','date',this.value)">
       </div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+        <label>&nbsp;</label>
         <span class="entry-loss" id="loss-${e.id}">${computeLoss(e).toFixed(2)} kg</span>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+        <label>&nbsp;</label>
         <button class="entry-remove" onclick="removeEntry('${e.id}')" title="Remove entry">&times;</button>
       </div>
     </div>`;
   });
   list.innerHTML = html;
+}
+
+function toggleBulk() {
+  document.getElementById('bulk-panel').classList.toggle('active');
+}
+
+function parseDate(raw) {
+  raw = raw.trim();
+  // already ISO
+  if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
+  // dd/mm/yyyy or dd-mm-yyyy
+  const m = raw.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+  if (m) {
+    const dd = m[1].padStart(2,'0'), mm = m[2].padStart(2,'0'), yyyy = m[3];
+    return `${yyyy}-${mm}-${dd}`;
+  }
+  return todayOrWeekStart();
+}
+
+function parseCategory(raw) {
+  const r = raw.trim().toLowerCase();
+  const found = CATEGORIES.find(c => c.key.startsWith(r) || c.label.toLowerCase().startsWith(r) || r.startsWith(c.key.slice(0,4)));
+  return found ? found.key : 'other';
+}
+
+function importBulk() {
+  const raw = document.getElementById('bulk-text').value;
+  const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
+  if (!lines.length) { showToast('Paste at least one row first.', 'warning'); return; }
+  let added = 0, skipped = 0;
+  lines.forEach(line => {
+    const parts = line.split(/\t|,/).map(p => p.trim()).filter((p,i,arr) => !(p==='' && arr.length<5));
+    if (parts.length < 4) { skipped++; return; }
+    const [causeRaw, asset, machinesRaw, minutesRaw, dateRaw] = parts;
+    addEntry({
+      category: parseCategory(causeRaw || 'other'),
+      asset: asset || '',
+      machines: parseFloat(machinesRaw) || 1,
+      minutes: parseFloat(minutesRaw) || 0,
+      date: dateRaw ? parseDate(dateRaw) : todayOrWeekStart()
+    });
+    added++;
+  });
+  document.getElementById('bulk-text').value = '';
+  toggleBulk();
+  if (added) showToast(`Added ${added} ${added===1?'entry':'entries'} from the pasted log${skipped?`, skipped ${skipped} unreadable line(s)`:''}.`, 'success');
+  else showToast('Could not read any rows. Check the format and try again.', 'error');
 }
 
 function renderSummary() {
@@ -340,7 +439,6 @@ function renderSummary() {
     document.getElementById('sum-efficiency').textContent = '\u2014';
   }
 
-  // leading cause
   let topKey = null, topVal = -1;
   CATEGORIES.forEach(c => { if (totals[c.key] > topVal) { topVal = totals[c.key]; topKey = c.key; } });
   const topCat = CATEGORIES.find(c => c.key === topKey);
@@ -366,31 +464,54 @@ function renderSummary() {
   }
 }
 
+function formatDateDisplay(iso) {
+  if (!iso) return '';
+  const [y,m,d] = iso.split('-');
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `${d} ${months[parseInt(m)-1]} ${y}`;
+}
+
+function weekLabel() {
+  const ws = document.getElementById('cycle-week-start').value;
+  const we = document.getElementById('cycle-week-end').value;
+  if (ws && we) return `${formatDateDisplay(ws)} to ${formatDateDisplay(we)}`;
+  if (ws) return formatDateDisplay(ws);
+  return '';
+}
+
+function onWeekChange() {
+  document.getElementById('week-label-display').innerHTML = weekLabel() ? `Week label: <b>${weekLabel()}</b>` : '';
+}
+
 function newCycle() {
   entries = [];
   document.getElementById('cycle-dept').value = '';
-  document.getElementById('cycle-week').value = '';
+  document.getElementById('cycle-week-start').value = '';
+  document.getElementById('cycle-week-end').value = '';
   document.getElementById('prod-actual').value = '';
   document.getElementById('prod-target').value = '';
+  lastUsed = { category: 'power', asset: '', machines: 1 };
+  onWeekChange();
   renderEntries();
   renderSummary();
 }
 
 function getAllSaved() {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-  } catch (e) { return []; }
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
+  catch (e) { return []; }
 }
 
 function saveCycle() {
   const dept = document.getElementById('cycle-dept').value.trim();
-  const week = document.getElementById('cycle-week').value.trim();
-  if (!dept || !week) { showToast('Enter the facility/department and week before saving.', 'warning'); return; }
+  const week = weekLabel();
+  if (!dept || !week) { showToast('Enter the facility/department and week dates before saving.', 'warning'); return; }
   if (!entries.length) { showToast('Add at least one downtime entry before saving.', 'warning'); return; }
 
   const cycle = {
     id: 'cyc_' + Date.now(),
     dept, week,
+    weekStart: document.getElementById('cycle-week-start').value,
+    weekEnd: document.getElementById('cycle-week-end').value,
     entries: JSON.parse(JSON.stringify(entries)),
     actual: document.getElementById('prod-actual').value,
     target: document.getElementById('prod-target').value,
@@ -412,11 +533,13 @@ function loadCycle(id) {
   const cycle = all.find(c => c.id === id);
   if (!cycle) return;
   document.getElementById('cycle-dept').value = cycle.dept;
-  document.getElementById('cycle-week').value = cycle.week;
+  document.getElementById('cycle-week-start').value = cycle.weekStart || '';
+  document.getElementById('cycle-week-end').value = cycle.weekEnd || '';
   document.getElementById('prod-actual').value = cycle.actual || '';
   document.getElementById('prod-target').value = cycle.target || '';
   entries = JSON.parse(JSON.stringify(cycle.entries));
-  entryIdCounter += 1000; // avoid id collisions with reloaded entries
+  entryIdCounter += 1000;
+  onWeekChange();
   renderEntries();
   renderSummary();
   showToast('Loaded: ' + cycle.dept + ' \u2014 ' + cycle.week, 'success');
@@ -450,7 +573,7 @@ function renderSavedList() {
 
 function copySummary() {
   const dept = document.getElementById('cycle-dept').value.trim() || '(department not set)';
-  const week = document.getElementById('cycle-week').value.trim() || '(week not set)';
+  const week = weekLabel() || '(week not set)';
   const totalLoss = document.getElementById('sum-total-loss').textContent;
   const eff = document.getElementById('sum-efficiency').textContent;
   const topCause = document.getElementById('sum-top-cause').textContent;
@@ -478,7 +601,8 @@ function showToast(msg, type) {
 
 // ── INIT ──────────────────────────────────────────────────────────────────
 renderSavedList();
-addEntry();
+renderEntries();
+renderSummary();
 </script>
 </body>
 </html>
