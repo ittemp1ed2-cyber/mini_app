@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Downtime &amp; Production Loss Review</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --purple:#7B2FBE;--purple-dark:#4B0082;--purple-light:#EDE7F6;
+  --green:#1B8A4C;--green-light:#E6F4EC;
+  --red:#C0392B;--red-light:#FDECEA;
+  --amber:#E67E22;--amber-light:#FDF2E3;
+  --grey-bg:#F5F5F5;--grey-border:#DDDDDD;--grey-text:#888888;
+  --text:#1A1A1A;--white:#FFFFFF;--radius:10px;
+  --shadow:0 1px 4px rgba(0,0,0,0.08);
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--grey-bg);color:var(--text);min-height:100vh;padding-bottom:30px}
+
+/* TOP BAR */
+.topbar{background:var(--purple-dark);padding:14px 16px;position:sticky;top:0;z-index:30}
+.topbar-org{font-size:11px;color:rgba(255,255,255,0.6);letter-spacing:.06em;text-transform:uppercase;margin-bottom:2px}
+.topbar-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.topbar-title{font-size:16px;font-weight:600;color:#fff}
+.topbar-sub{font-size:11px;color:rgba(255,255,255,0.65);margin-top:1px}
+.icon-btn{background:rgba(255,255,255,0.15);border:none;border-radius:8px;color:#fff;padding:8px 12px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit}
+.icon-btn:active{opacity:0.7}
+
+.wrap{max-width:760px;margin:0 auto;padding:0 16px}
+
+/* CYCLE BAR */
+.cycle-bar{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);margin-top:14px;padding:14px}
+.cycle-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.field-group{display:flex;flex-direction:column;gap:4px}
+.field-label{font-size:11px;font-weight:600;color:var(--grey-text);text-transform:uppercase;letter-spacing:.04em}
+.field-group input,.field-group select{border:1px solid var(--grey-border);border-radius:8px;padding:9px 10px;font-size:14px;font-weight:500;color:var(--text);background:var(--grey-bg);width:100%;outline:none;font-family:inherit}
+.field-group input:focus,.field-group select:focus{border-color:var(--purple)}
+.cycle-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{padding:9px 14px;border-radius:8px;border:1px solid var(--grey-border);background:var(--white);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--text)}
+.btn:active{opacity:.7}
+.btn.primary{background:var(--purple);color:#fff;border-color:var(--purple)}
+.btn.primary:hover{background:var(--purple-dark)}
+.btn.ghost{color:var(--purple);border-color:var(--purple)}
+.btn.danger{color:var(--red);border-color:var(--red)}
+.saved-list{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px}
+.saved-chip{background:var(--purple-light);color:var(--purple-dark);border-radius:20px;padding:5px 10px;font-size:11.5px;font-weight:600;cursor:pointer;border:1px solid transparent;display:flex;align-items:center;gap:6px}
+.saved-chip:hover{border-color:var(--purple)}
+.saved-chip .del{color:var(--red);font-weight:700;cursor:pointer;padding:0 2px}
+
+/* SECTION CARD */
+.card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);margin-top:14px;padding:14px}
+.card h2{font-size:14px;font-weight:700;color:var(--purple-dark);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.card h2 .hint{font-size:11px;font-weight:500;color:var(--grey-text);text-transform:none}
+
+/* ENTRY TABLE */
+.entry-row{display:grid;grid-template-columns:1.3fr 1fr 0.7fr 0.8fr 1fr auto;gap:6px;align-items:end;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--grey-border)}
+.entry-row:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.entry-row label{font-size:9.5px;font-weight:600;color:var(--grey-text);text-transform:uppercase;letter-spacing:.03em;display:block;margin-bottom:3px}
+.entry-row select,.entry-row input{width:100%;border:1px solid var(--grey-border);border-radius:7px;padding:7px 6px;font-size:12.5px;background:var(--grey-bg);font-family:inherit;outline:none}
+.entry-row select:focus,.entry-row input:focus{border-color:var(--purple)}
+.entry-loss{font-size:12px;font-weight:700;color:var(--purple-dark);text-align:right;white-space:nowrap}
+.entry-remove{background:var(--red-light);color:var(--red);border:1px solid #F1A9A0;border-radius:6px;width:28px;height:28px;font-size:14px;font-weight:700;cursor:pointer;line-height:1}
+.add-row-btn{width:100%;padding:10px;border-radius:8px;border:1.5px dashed var(--purple);background:var(--purple-light);color:var(--purple-dark);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:6px}
+.add-row-btn:active{opacity:.7}
+.empty-note{color:var(--grey-text);font-size:12.5px;text-align:center;padding:14px 0}
+
+/* PRODUCTION INPUTS */
+.prod-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* SUMMARY */
+.summary-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px}
+.summary-stat{background:var(--grey-bg);border-radius:var(--radius);padding:12px;text-align:center}
+.summary-stat .num{font-size:22px;font-weight:700;color:var(--purple-dark)}
+.summary-stat.eff-good .num{color:var(--green)}
+.summary-stat.eff-bad .num{color:var(--red)}
+.summary-stat .lbl{font-size:10.5px;color:var(--grey-text);margin-top:2px}
+.cause-bars{display:flex;flex-direction:column;gap:8px}
+.cause-bar-row{display:flex;align-items:center;gap:8px}
+.cause-bar-label{font-size:11.5px;font-weight:600;color:var(--text);width:105px;flex-shrink:0}
+.cause-bar-track{flex:1;background:var(--grey-bg);border-radius:6px;height:16px;overflow:hidden;position:relative}
+.cause-bar-fill{height:100%;border-radius:6px;transition:width .3s}
+.cause-bar-val{font-size:11px;font-weight:700;color:var(--text);width:78px;text-align:right;flex-shrink:0}
+.top-cause-flag{margin-top:10px;background:var(--amber-light);border:1px solid #F5D0A4;border-radius:8px;padding:9px 12px;font-size:12px;color:#8a4b0f}
+.top-cause-flag b{color:var(--amber)}
+
+/* EXPORT ROW */
+.export-row{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.export-row .btn{flex:1;min-width:140px}
+
+/* TOAST */
+.toast{position:fixed;top:14px;left:16px;right:16px;max-width:728px;margin:0 auto;padding:13px 16px;border-radius:var(--radius);font-size:13.5px;font-weight:500;z-index:200;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,.15);color:#fff}
+.toast.success{background:var(--green)}
+.toast.warning{background:var(--amber)}
+.toast.error{background:var(--red)}
+
+/* HELP MODAL */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;align-items:center;justify-content:center;padding:20px}
+.overlay.active{display:flex}
+.help-dialog{background:#fff;border-radius:16px;padding:22px;max-width:480px;max-height:82vh;overflow-y:auto}
+.help-dialog h3{color:var(--purple-dark);font-size:16px;margin-bottom:12px}
+.help-dialog h4{color:var(--purple);font-size:13px;margin:14px 0 5px}
+.help-dialog p,.help-dialog li{font-size:13px;line-height:1.55;color:var(--text)}
+.help-dialog ul,.help-dialog ol{padding-left:18px;margin-bottom:6px}
+.help-close{width:100%;margin-top:16px;padding:11px;border-radius:8px;border:none;background:var(--purple);color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
+
+/* PRINT */
+.print-only{display:none}
+@media print{
+  .topbar,.cycle-bar,.add-row-btn,.entry-remove,.export-row,.overlay,.toast{display:none!important}
+  body{background:#fff;padding:0}
+  .card{box-shadow:none;border:1px solid #ccc;break-inside:avoid}
+  .print-only{display:block}
+  .wrap{max-width:100%}
+}
+
+@media (max-width:600px){
+  .entry-row{grid-template-columns:1fr 1fr;grid-template-areas:"cat cat" "asset mch" "min date" "loss remove"}
+  .entry-row > div:nth-child(1){grid-area:cat}
+  .entry-row > div:nth-child(2){grid-area:asset}
+  .entry-row > div:nth-child(3){grid-area:mch}
+  .entry-row > div:nth-child(4){grid-area:min}
+  .entry-row > div:nth-child(5){grid-area:date}
+  .cycle-row{grid-template-columns:1fr}
+  .prod-grid{grid-template-columns:1fr}
+  .summary-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-org">Rumbu Industries Group &middot; Office of ED2</div>
+  <div class="topbar-row">
+    <div>
+      <div class="topbar-title">Downtime &amp; Production Loss Review</div>
+      <div class="topbar-sub">Weekly oversight tool</div>
+    </div>
+    <button class="icon-btn" onclick="toggleHelp(true)">? Help</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- CYCLE BAR -->
+  <div class="cycle-bar">
+    <div class="cycle-row">
+      <div class="field-group">
+        <span class="field-label">Facility / Department</span>
+        <input type="text" id="cycle-dept" placeholder="e.g. Rumbu Main Mat Factory &ndash; Mat Extruder">
+      </div>
+      <div class="field-group">
+        <span class="field-label">Week covered</span>
+        <input type="text" id="cycle-week" placeholder="e.g. 08 to 13 Jun 2026">
+      </div>
+    </div>
+    <div class="cycle-actions">
+      <button class="btn primary" onclick="saveCycle()">Save this cycle</button>
+      <button class="btn ghost" onclick="newCycle()">New cycle</button>
+      <button class="btn danger" onclick="clearAllSaved()">Clear all saved</button>
+    </div>
+    <div class="saved-list" id="saved-list"></div>
+  </div>
+
+  <!-- ENTRY LOG -->
+  <div class="card">
+    <h2>Downtime entries <span class="hint" id="entry-count-hint">0 entries</span></h2>
+    <div id="entry-list"></div>
+    <button class="add-row-btn" onclick="addEntry()">+ Add downtime entry</button>
+  </div>
+
+  <!-- PRODUCTION FIGURES -->
+  <div class="card">
+    <h2>Production figures for the week</h2>
+    <div class="prod-grid">
+      <div class="field-group">
+        <span class="field-label">Actual production (kg)</span>
+        <input type="number" id="prod-actual" placeholder="e.g. 124462.82" oninput="renderSummary()">
+      </div>
+      <div class="field-group">
+        <span class="field-label">Target production (kg)</span>
+        <input type="number" id="prod-target" placeholder="e.g. 145213.2" oninput="renderSummary()">
+      </div>
+    </div>
+  </div>
+
+  <!-- SUMMARY -->
+  <div class="card" id="summary-card">
+    <h2>Summary for ED2 review</h2>
+    <div class="summary-grid">
+      <div class="summary-stat"><div class="num" id="sum-entries">0</div><div class="lbl">Downtime entries</div></div>
+      <div class="summary-stat"><div class="num" id="sum-total-loss">0 kg</div><div class="lbl">Total loss</div></div>
+      <div class="summary-stat" id="sum-eff-card"><div class="num" id="sum-efficiency">&mdash;</div><div class="lbl">Production efficiency</div></div>
+      <div class="summary-stat"><div class="num" id="sum-top-cause">&mdash;</div><div class="lbl">Leading cause</div></div>
+    </div>
+    <div class="cause-bars" id="cause-bars"></div>
+    <div class="top-cause-flag" id="top-cause-flag" style="display:none"></div>
+
+    <div class="export-row">
+      <button class="btn primary" onclick="window.print()">Print / save as PDF</button>
+      <button class="btn ghost" onclick="copySummary()">Copy summary as text</button>
+    </div>
+  </div>
+
+  <div style="text-align:center;color:var(--grey-text);font-size:11px;margin:18px 0 4px">
+    INTERNAL &middot; Rumbu Industries Group &middot; Office of ED2 &middot; Data is saved in this browser only
+  </div>
+</div>
+
+<!-- HELP MODAL -->
+<div class="overlay" id="help-overlay">
+  <div class="help-dialog">
+    <h3>How this tool works</h3>
+    <p>This tool turns a department's weekly downtime log into an instant loss figure and efficiency review, without manual arithmetic.</p>
+    <h4>1. Name the cycle</h4>
+    <p>Enter the facility or department and the week covered, at the top.</p>
+    <h4>2. Add each downtime entry</h4>
+    <p>For every downtime event reported to you, add one entry: cause category, the unit or line affected, how many machines were affected, and how many minutes of downtime. The tool calculates the kilograms lost automatically using the standard rate (0.265 kg per machine per minute).</p>
+    <h4>3. Enter the week's production figures</h4>
+    <p>Add actual production and target production in kilograms. Efficiency is calculated automatically.</p>
+    <h4>4. Read the summary</h4>
+    <p>The summary shows total loss, efficiency, and which cause is responsible for the most loss this week. A leading-cause flag appears automatically once one category passes 40 percent of total loss.</p>
+    <h4>5. Save and compare cycles</h4>
+    <p>Use &ldquo;Save this cycle&rdquo; to keep a week's entries in this browser. Saved weeks appear as chips you can reopen at any time to compare week on week. &ldquo;New cycle&rdquo; clears the form to start the next week without deleting saved ones.</p>
+    <h4>6. Share the result</h4>
+    <p>Use &ldquo;Print / save as PDF&rdquo; for a fileable one-page copy, or &ldquo;Copy summary as text&rdquo; to paste the headline figures into an email or chat message.</p>
+    <h4>Note on data</h4>
+    <p>Entries are stored only in the browser you are using. They are not sent anywhere. If you switch computers or clear browser data, saved cycles will not carry over &mdash; print or copy anything you need to keep.</p>
+    <button class="help-close" onclick="toggleHelp(false)">Close</button>
+  </div>
+</div>
+
+<script>
+const RATE = 0.265; // kg lost per machine per minute of downtime, per Mat Extruder Dept standard
+const CATEGORIES = [
+  {key:'power', label:'Power interruption', color:'#7B2FBE'},
+  {key:'water', label:'Water supply', color:'#2E75B6'},
+  {key:'staff', label:'Staff shortage', color:'#E67E22'},
+  {key:'mechanical', label:'Mechanical / equipment', color:'#C0392B'},
+  {key:'other', label:'Other', color:'#888888'}
+];
+const STORAGE_KEY = 'ed2_downtime_cycles_v1';
+
+let entries = [];
+let entryIdCounter = 0;
+
+function addEntry(prefill) {
+  const id = 'e' + (++entryIdCounter);
+  entries.push(Object.assign({
+    id, category:'power', asset:'', machines:1, minutes:'', date:''
+  }, prefill || {}));
+  renderEntries();
+  renderSummary();
+}
+
+function removeEntry(id) {
+  entries = entries.filter(e => e.id !== id);
+  renderEntries();
+  renderSummary();
+}
+
+function updateEntry(id, field, value) {
+  const e = entries.find(x => x.id === id);
+  if (!e) return;
+  e[field] = value;
+  renderSummary();
+  // refresh only the loss figure without a full re-render to keep focus in the field
+  const lossEl = document.getElementById('loss-' + id);
+  if (lossEl) lossEl.textContent = computeLoss(e).toFixed(2) + ' kg';
+}
+
+function computeLoss(e) {
+  const m = parseFloat(e.machines) || 0;
+  const min = parseFloat(e.minutes) || 0;
+  return RATE * m * min;
+}
+
+function renderEntries() {
+  const list = document.getElementById('entry-list');
+  document.getElementById('entry-count-hint').textContent = entries.length + (entries.length === 1 ? ' entry' : ' entries');
+  if (!entries.length) {
+    list.innerHTML = '<div class="empty-note">No downtime entries yet. Add the first one below.</div>';
+    return;
+  }
+  let html = '';
+  entries.forEach(e => {
+    html += `<div class="entry-row">
+      <div>
+        <label>Cause</label>
+        <select onchange="updateEntry('${e.id}','category',this.value)">
+          ${CATEGORIES.map(c => `<option value="${c.key}" ${e.category===c.key?'selected':''}>${c.label}</option>`).join('')}
+        </select>
+      </div>
+      <div>
+        <label>Unit / line</label>
+        <input type="text" value="${e.asset}" placeholder="e.g. EXT1" oninput="updateEntry('${e.id}','asset',this.value)">
+      </div>
+      <div>
+        <label>Machines</label>
+        <input type="number" min="1" value="${e.machines}" oninput="updateEntry('${e.id}','machines',this.value)">
+      </div>
+      <div>
+        <label>Minutes</label>
+        <input type="number" min="0" value="${e.minutes}" oninput="updateEntry('${e.id}','minutes',this.value)">
+      </div>
+      <div>
+        <label>Date</label>
+        <input type="text" value="${e.date}" placeholder="dd/mm/yyyy" oninput="updateEntry('${e.id}','date',this.value)">
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+        <span class="entry-loss" id="loss-${e.id}">${computeLoss(e).toFixed(2)} kg</span>
+        <button class="entry-remove" onclick="removeEntry('${e.id}')" title="Remove entry">&times;</button>
+      </div>
+    </div>`;
+  });
+  list.innerHTML = html;
+}
+
+function renderSummary() {
+  const totals = {};
+  CATEGORIES.forEach(c => totals[c.key] = 0);
+  let grandTotal = 0;
+  entries.forEach(e => {
+    const loss = computeLoss(e);
+    totals[e.category] = (totals[e.category] || 0) + loss;
+    grandTotal += loss;
+  });
+
+  document.getElementById('sum-entries').textContent = entries.length;
+  document.getElementById('sum-total-loss').textContent = grandTotal.toLocaleString(undefined, {maximumFractionDigits:2}) + ' kg';
+
+  const actual = parseFloat(document.getElementById('prod-actual').value);
+  const target = parseFloat(document.getElementById('prod-target').value);
+  const effCard = document.getElementById('sum-eff-card');
+  effCard.classList.remove('eff-good','eff-bad');
+  if (actual > 0 && target > 0) {
+    const eff = (actual / target) * 100;
+    document.getElementById('sum-efficiency').textContent = eff.toFixed(1) + '%';
+    effCard.classList.add(eff >= 90 ? 'eff-good' : 'eff-bad');
+  } else {
+    document.getElementById('sum-efficiency').textContent = '\u2014';
+  }
+
+  // leading cause
+  let topKey = null, topVal = -1;
+  CATEGORIES.forEach(c => { if (totals[c.key] > topVal) { topVal = totals[c.key]; topKey = c.key; } });
+  const topCat = CATEGORIES.find(c => c.key === topKey);
+  document.getElementById('sum-top-cause').textContent = (grandTotal > 0 && topCat) ? topCat.label : '\u2014';
+
+  const barsEl = document.getElementById('cause-bars');
+  barsEl.innerHTML = CATEGORIES.map(c => {
+    const val = totals[c.key] || 0;
+    const pct = grandTotal > 0 ? (val / grandTotal) * 100 : 0;
+    return `<div class="cause-bar-row">
+      <div class="cause-bar-label">${c.label}</div>
+      <div class="cause-bar-track"><div class="cause-bar-fill" style="width:${pct}%;background:${c.color}"></div></div>
+      <div class="cause-bar-val">${val.toLocaleString(undefined,{maximumFractionDigits:1})} kg</div>
+    </div>`;
+  }).join('');
+
+  const flagEl = document.getElementById('top-cause-flag');
+  if (grandTotal > 0 && topCat && (topVal / grandTotal) >= 0.4) {
+    flagEl.style.display = 'block';
+    flagEl.innerHTML = `<b>${topCat.label}</b> accounts for ${((topVal/grandTotal)*100).toFixed(0)}% of this week's loss (${topVal.toLocaleString(undefined,{maximumFractionDigits:1})} kg). Worth a direct follow up with the department.`;
+  } else {
+    flagEl.style.display = 'none';
+  }
+}
+
+function newCycle() {
+  entries = [];
+  document.getElementById('cycle-dept').value = '';
+  document.getElementById('cycle-week').value = '';
+  document.getElementById('prod-actual').value = '';
+  document.getElementById('prod-target').value = '';
+  renderEntries();
+  renderSummary();
+}
+
+function getAllSaved() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  } catch (e) { return []; }
+}
+
+function saveCycle() {
+  const dept = document.getElementById('cycle-dept').value.trim();
+  const week = document.getElementById('cycle-week').value.trim();
+  if (!dept || !week) { showToast('Enter the facility/department and week before saving.', 'warning'); return; }
+  if (!entries.length) { showToast('Add at least one downtime entry before saving.', 'warning'); return; }
+
+  const cycle = {
+    id: 'cyc_' + Date.now(),
+    dept, week,
+    entries: JSON.parse(JSON.stringify(entries)),
+    actual: document.getElementById('prod-actual').value,
+    target: document.getElementById('prod-target').value,
+    savedAt: new Date().toISOString()
+  };
+  const all = getAllSaved();
+  all.push(cycle);
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
+    showToast('Cycle saved: ' + dept + ' \u2014 ' + week, 'success');
+    renderSavedList();
+  } catch (e) {
+    showToast('Could not save. Browser storage may be full or disabled.', 'error');
+  }
+}
+
+function loadCycle(id) {
+  const all = getAllSaved();
+  const cycle = all.find(c => c.id === id);
+  if (!cycle) return;
+  document.getElementById('cycle-dept').value = cycle.dept;
+  document.getElementById('cycle-week').value = cycle.week;
+  document.getElementById('prod-actual').value = cycle.actual || '';
+  document.getElementById('prod-target').value = cycle.target || '';
+  entries = JSON.parse(JSON.stringify(cycle.entries));
+  entryIdCounter += 1000; // avoid id collisions with reloaded entries
+  renderEntries();
+  renderSummary();
+  showToast('Loaded: ' + cycle.dept + ' \u2014 ' + cycle.week, 'success');
+}
+
+function deleteCycle(id, evt) {
+  evt.stopPropagation();
+  const all = getAllSaved().filter(c => c.id !== id);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
+  renderSavedList();
+}
+
+function clearAllSaved() {
+  if (!getAllSaved().length) return;
+  localStorage.removeItem(STORAGE_KEY);
+  renderSavedList();
+  showToast('All saved cycles cleared.', 'success');
+}
+
+function renderSavedList() {
+  const all = getAllSaved();
+  const el = document.getElementById('saved-list');
+  if (!all.length) { el.innerHTML = ''; return; }
+  el.innerHTML = all.map(c =>
+    `<div class="saved-chip" onclick="loadCycle('${c.id}')">
+      ${c.dept} &middot; ${c.week}
+      <span class="del" onclick="deleteCycle('${c.id}', event)" title="Delete">&times;</span>
+    </div>`
+  ).join('');
+}
+
+function copySummary() {
+  const dept = document.getElementById('cycle-dept').value.trim() || '(department not set)';
+  const week = document.getElementById('cycle-week').value.trim() || '(week not set)';
+  const totalLoss = document.getElementById('sum-total-loss').textContent;
+  const eff = document.getElementById('sum-efficiency').textContent;
+  const topCause = document.getElementById('sum-top-cause').textContent;
+  const text = `Downtime & Production Loss Review\n${dept} \u2014 ${week}\n\nEntries logged: ${entries.length}\nTotal production loss: ${totalLoss}\nProduction efficiency: ${eff}\nLeading cause: ${topCause}\n\nPrepared using the ED2 Downtime & Production Loss Review tool.`;
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('Summary copied to clipboard.', 'success');
+  }).catch(() => {
+    showToast('Could not copy automatically. Select and copy the summary manually.', 'warning');
+  });
+}
+
+function toggleHelp(show) {
+  document.getElementById('help-overlay').classList.toggle('active', show);
+}
+
+function showToast(msg, type) {
+  const existing = document.querySelector('.toast');
+  if (existing) existing.remove();
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3200);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+renderSavedList();
+addEntry();
+</script>
+</body>
+</html>
